@@ -43,7 +43,7 @@ while True:
     testCube_img = pygame.image.load("empty.png")
 
     #def thimgs
-    def testCube(index):
+    def walkers(index):
         screen.blit(testCube_img,(cube_gposX[index] * TILESIZE,cube_gposY[index] * TILESIZE))
         floormarkerX.append(int(cube_gposX[index]))
         floormarkerY.append(int(cube_gposY[index]))
@@ -52,6 +52,7 @@ while True:
         for x in range(0,len(floormarkerX)):
             pygame.draw.rect(screen,RED,(floormarkerX[x] * TILESIZE,floormarkerY[x] * TILESIZE,32,32))
             #print(floormarkerX[count],floormarkerY[count])
+
             try:
                 GRID[floormarkerY[x]][floormarkerX[x]] = 1
             except IndexError:
@@ -65,17 +66,6 @@ while True:
         for y in range(0,HEIGHT,TILESIZE):
             pygame.draw.line(screen,WHITE,(0,y),(WIDTH,y))
 
-    def cubebound(index):
-        global cube_gposX
-        global cube_gposY
-        if cube_gposX[index] > WIDTH - 1:
-            cube_gposX[index] = WIDTH - 2
-        if cube_gposY[index] > HEIGHT - 1:
-            cube_gposY[index] = HEIGHT - 2
-        if cube_gposX[index] < 1:
-            cube_gposX[index] = 1
-        if cube_gposY[index] < 1:
-            cube_gposY[index] = 1
 
 
     def random_walk():
@@ -85,24 +75,44 @@ while True:
         global generated
 
         for x in range(0, len(cube_gposX)):
+
             DOWN = cube_gposY[x] + 1
             UP = cube_gposY[x] - 1
-            LEFT = cube_gposX[x] + 1
-            RIGHT = cube_gposX[x] - 1
+            LEFT = cube_gposX[x] - 1
+            RIGHT = cube_gposX[x] + 1
+            select_dir = random.random()
             if generated == False:
-                select_dir = random.random()
+
                 if select_dir > 0 and select_dir < 0.25:
-                    #print("LEFT")
-                    cube_gposX[x] = LEFT
+                    print("LEFT")
+                    if cube_gposX[x] <= 2:
+                        pass
+                    else:
+                        cube_gposX[x] = LEFT
+
                 if select_dir > 0.26 and select_dir < 0.5:
-                    #print("RIGHT")
-                    cube_gposX[x] = RIGHT
+                    print("RIGHT")
+                    if cube_gposX[x] >= GRIDWIDTH - 2:
+                        pass
+                    else:
+                        cube_gposX[x] = RIGHT
+
                 if select_dir > 0.51 and select_dir < 0.75:
-                    #print("UP")
-                    cube_gposY[x] = UP
+                    print("UP")
+                    if cube_gposY[x] == GRIDHEIGHT - 2:
+                        pass
+                    else:
+                        cube_gposY[x] = UP
+
                 if select_dir > 0.76 and select_dir < 1:
-                    #print("DOWN")
-                    cube_gposY[x] = DOWN
+                    print("DOWN")
+                    if cube_gposY[x] == 2:
+                        pass
+                    else:
+                        cube_gposY[x] = DOWN
+
+    def drawfromgrid():
+        pass
 
 
     #game loop
@@ -112,35 +122,44 @@ while True:
         drawgrid()
         random_walk()
         for x in range(0, len(cube_gposX)):
-            testCube(x)
-            cubebound(x)
+            walkers(x)
         if GEN_LIMIT == 0:
             generated = True
             for j in range(0, len(GRID)):
                 for u in range(len(GRID[j])):
-                    if  GRID[j][u] == 0:
-                        try:
-                            if GRID[j][u+1] == 0:
-                                GRID[j][u+1] == 2
+                        if  GRID[j][u] == 1:
+                            try:
+                                if GRID[j][u+1] == 0:
+                                    GRID[j][u+1] = 2
+                            except IndexError:
+                                GRID[j][u] = 2
+                            try:
+                                if GRID[j][u-1] == 0:
+                                    GRID[j][u-1] = 2
+                            except IndexError:
+                                GRID[j][u] = 2
+                            try:
+                                if GRID[j+1][u] == 0:
+                                    GRID[j+1][u] = 2
+                            except IndexError:
+                                GRID[j][u] = 2
+                            try:
+                                if GRID[j-1][u] == 0:
+                                    GRID[j-1][u] = 2
+                            except IndexError:
+                                GRID[j][u] = 2
 
-                        except IndexError:
-                            pass
-                        try:
-                            if GRID[j][u-1] == 0:
-                                GRID[j][u-1] == 2
-                        except IndexError:
-                            pass
-                        try:
-                            if GRID[j+1][u] == 0:
-                                GRID[j+1][u] == 2
-                        except IndexError:
-                            pass
-                        try:
-                            if GRID[j-1][u] == 0:
-                                GRID[j-1][u] == 2
-                        except IndexError:
-                            pass
-
+                            if GRID[0][u] == 1:
+                                GRID[0][u] = 2
+                            try:
+                                if GRID[GRIDHEIGHT][u] == 1:
+                                    GRID[GRIDHEIGHT][u] = 2
+                                if GRID[j][0] == 1:
+                                    GRID[j][0] = 2
+                                if GRID[j][GRIDWIDTH - 1] == 1:
+                                    GRID[j][GRIDWIDTH - 1] = 2
+                            except IndexError:
+                                pass
 
             if printedmap == False:
                 for i in range(GRIDHEIGHT):
@@ -149,6 +168,7 @@ while True:
 
             printedmap = True
         GEN_LIMIT -= 1
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
