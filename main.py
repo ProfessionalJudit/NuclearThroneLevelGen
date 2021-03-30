@@ -1,16 +1,21 @@
 import pygame
 import random
 import array
-
+import sys
 
 
 #Set things
 while True:
     WIDTH = 1216
+    printedmap = False
     HEIGHT = 720
     TILESIZE = 32
-    GRIDWIDTH = WIDTH / TILESIZE
-    GRIDHEIGHT = HEIGHT / TILESIZE
+    GRIDWIDTH = int(WIDTH / TILESIZE)
+    GRIDHEIGHT = int(HEIGHT / TILESIZE)
+    GRID = []
+    for i in range(GRIDHEIGHT):
+        GRID.append([0] * GRIDWIDTH)
+
     WHITE = (255,255,255)
     RED = (255,0,0)
     cube_gposX = []
@@ -43,11 +48,17 @@ while True:
         floormarkerX.append(int(cube_gposX[index]))
         floormarkerY.append(int(cube_gposY[index]))
         count = 0
-        while count < len(floormarkerX):
-            pygame.draw.rect(screen,RED,(floormarkerX[count] * TILESIZE,floormarkerY[count] * TILESIZE,32,32))
-            count += 1
 
-    def grid():
+        for x in range(0,len(floormarkerX)):
+            pygame.draw.rect(screen,RED,(floormarkerX[x] * TILESIZE,floormarkerY[x] * TILESIZE,32,32))
+            #print(floormarkerX[count],floormarkerY[count])
+            try:
+                GRID[floormarkerY[x]][floormarkerX[x]] = 1
+            except IndexError:
+                pass
+
+
+    def drawgrid():
         for x in range(0,WIDTH,TILESIZE):
             pygame.draw.line(screen,WHITE,(x,0),(x,HEIGHT))
 
@@ -94,21 +105,54 @@ while True:
                     cube_gposY[x] = DOWN
 
 
-
     #game loop
     while running == True:
         clock.tick(30)
         screen.fill((0,0,0))
-        grid()
+        drawgrid()
         random_walk()
         for x in range(0, len(cube_gposX)):
             testCube(x)
             cubebound(x)
         if GEN_LIMIT == 0:
             generated = True
+            for j in range(0, len(GRID)):
+                for u in range(len(GRID[j])):
+                    if  GRID[j][u] == 0:
+                        try:
+                            if GRID[j][u+1] == 0:
+                                GRID[j][u+1] == 2
+
+                        except IndexError:
+                            pass
+                        try:
+                            if GRID[j][u-1] == 0:
+                                GRID[j][u-1] == 2
+                        except IndexError:
+                            pass
+                        try:
+                            if GRID[j+1][u] == 0:
+                                GRID[j+1][u] == 2
+                        except IndexError:
+                            pass
+                        try:
+                            if GRID[j-1][u] == 0:
+                                GRID[j-1][u] == 2
+                        except IndexError:
+                            pass
+
+
+            if printedmap == False:
+                for i in range(GRIDHEIGHT):
+                    #print(GRID[i])
+                    pass
+
+            printedmap = True
         GEN_LIMIT -= 1
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     running = False
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
         pygame.display.update()
