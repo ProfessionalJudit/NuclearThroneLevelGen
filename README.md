@@ -2,7 +2,7 @@
 
 Made in python
 
-Im not good at codig
+Im not good at coding
 
 This uses pygame
 
