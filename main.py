@@ -18,13 +18,15 @@ while True:
 
     WHITE = (255,255,255)
     RED = (255,0,0)
+    PURPLE = (128,0,128)
+    YELLOW = (250,218,94)
     cube_gposX = []
     cube_gposY = []
-    walkers = int(input("\n \n \n \nNumber of Walkers[4] : ") or 4 )
-    steps = int(input("Number of Steps[90] : ") or 90)
+    walkers = int(input("\n \n \n \nNumber of Walkers[8] : ") or 8 )
+    steps = int(input("Number of Steps[120] : ") or 120)
     for x in range(walkers):
-        cube_gposX.append(GRIDWIDTH / 2)
-        cube_gposY.append(GRIDHEIGHT / 2)
+        cube_gposX.append(GRIDWIDTH / 2 + random.randint(-2, 2))
+        cube_gposY.append(GRIDHEIGHT / 2 + random.randint(-2, 2))
     GEN_LIMIT = steps
     generated = False
     floormarkerX = array.array("i")
@@ -44,13 +46,13 @@ while True:
 
     #def thimgs
     def walkers(index):
-        screen.blit(testCube_img,(cube_gposX[index] * TILESIZE,cube_gposY[index] * TILESIZE))
+        pygame.draw.rect(screen,WHITE,(cube_gposX[index] * TILESIZE,cube_gposY[index] * TILESIZE,TILESIZE,TILESIZE))
         floormarkerX.append(int(cube_gposX[index]))
         floormarkerY.append(int(cube_gposY[index]))
         count = 0
 
         for x in range(0,len(floormarkerX)):
-            pygame.draw.rect(screen,RED,(floormarkerX[x] * TILESIZE,floormarkerY[x] * TILESIZE,32,32))
+            #pygame.draw.rect(screen,RED,(floormarkerX[x] * TILESIZE,floormarkerY[x] * TILESIZE,32,32))
             #print(floormarkerX[count],floormarkerY[count])
 
             try:
@@ -59,7 +61,7 @@ while True:
                 pass
 
 
-    def drawgrid():
+    def printgrid():
         for x in range(0,WIDTH,TILESIZE):
             pygame.draw.line(screen,WHITE,(x,0),(x,HEIGHT))
 
@@ -85,14 +87,14 @@ while True:
 
                 if select_dir > 0 and select_dir < 0.25:
                     print("LEFT")
-                    if cube_gposX[x] <= 2:
+                    if cube_gposX[x] <= 1:
                         pass
                     else:
                         cube_gposX[x] = LEFT
 
                 if select_dir > 0.26 and select_dir < 0.5:
                     print("RIGHT")
-                    if cube_gposX[x] >= GRIDWIDTH - 2:
+                    if cube_gposX[x] >= GRIDWIDTH - 1:
                         pass
                     else:
                         cube_gposX[x] = RIGHT
@@ -102,72 +104,93 @@ while True:
                     if cube_gposY[x] == GRIDHEIGHT - 2:
                         pass
                     else:
-                        cube_gposY[x] = UP
+                        cube_gposY[x] = DOWN
 
                 if select_dir > 0.76 and select_dir < 1:
                     print("DOWN")
                     if cube_gposY[x] == 2:
                         pass
                     else:
-                        cube_gposY[x] = DOWN
+                        cube_gposY[x] = UP
+
+    def borders():
+        for j in range(0, len(GRID)):
+            for u in range(len(GRID[j])):
+                    if  GRID[j][u] == 1:
+                        try:
+                            if GRID[j][u+1] == 0:
+                                GRID[j][u+1] = 2
+                        except IndexError:
+                            GRID[j][u] = 2
+                        try:
+                            if GRID[j][u-1] == 0:
+                                GRID[j][u-1] = 2
+                        except IndexError:
+                            GRID[j][u] = 2
+                        try:
+                            if GRID[j+1][u] == 0:
+                                GRID[j+1][u] = 2
+                        except IndexError:
+                            GRID[j][u] = 2
+                        try:
+                            if GRID[j-1][u] == 0:
+                                GRID[j-1][u] = 2
+                        except IndexError:
+                            GRID[j][u] = 2
+                        try:
+                            if GRID[0][u] == 2:
+                                GRID[0][u] = 2
+
+                            if GRID[GRIDHEIGHT][u] == 2:
+                                GRID[GRIDHEIGHT][u] = 2
+                            if GRID[j][0] == 2:
+                                GRID[j][0] = 2
+                            if GRID[j][GRIDWIDTH - 1] == 2:
+                                GRID[j][GRIDWIDTH - 1] = 2
+                        except IndexError:
+                            pass
+        for j in range(0, len(GRID)):
+            for u in range(len(GRID[j])):
+
+                if GRID[j][u] == 2:
+                    try:
+                        if GRID[j][u+1] == 1 and GRID[j][u-1] == 1 and GRID[j+1][u] == 1 and GRID[j-1][u] == 1:
+                            GRID[j][u] = 1
+                    except IndexError:
+                        GRID[j][u] = 2
+
 
     def drawfromgrid():
-        pass
+        for j in range(0, len(GRID)):
+            for u in range(len(GRID[j])):
+                if GRID[j][u] == 1:
+                    pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                if GRID[j][u] == 2:
+                    pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+
 
 
     #game loop
     while running == True:
         clock.tick(30)
         screen.fill((0,0,0))
-        drawgrid()
+        printgrid()
         random_walk()
         for x in range(0, len(cube_gposX)):
             walkers(x)
         if GEN_LIMIT == 0:
             generated = True
-            for j in range(0, len(GRID)):
-                for u in range(len(GRID[j])):
-                        if  GRID[j][u] == 1:
-                            try:
-                                if GRID[j][u+1] == 0:
-                                    GRID[j][u+1] = 2
-                            except IndexError:
-                                GRID[j][u] = 2
-                            try:
-                                if GRID[j][u-1] == 0:
-                                    GRID[j][u-1] = 2
-                            except IndexError:
-                                GRID[j][u] = 2
-                            try:
-                                if GRID[j+1][u] == 0:
-                                    GRID[j+1][u] = 2
-                            except IndexError:
-                                GRID[j][u] = 2
-                            try:
-                                if GRID[j-1][u] == 0:
-                                    GRID[j-1][u] = 2
-                            except IndexError:
-                                GRID[j][u] = 2
-
-                            if GRID[0][u] == 1:
-                                GRID[0][u] = 2
-                            try:
-                                if GRID[GRIDHEIGHT][u] == 1:
-                                    GRID[GRIDHEIGHT][u] = 2
-                                if GRID[j][0] == 1:
-                                    GRID[j][0] = 2
-                                if GRID[j][GRIDWIDTH - 1] == 1:
-                                    GRID[j][GRIDWIDTH - 1] = 2
-                            except IndexError:
-                                pass
-
+            borders()
             if printedmap == False:
                 for i in range(GRIDHEIGHT):
                     print(GRID[i])
                     pass
 
+
             printedmap = True
         GEN_LIMIT -= 1
+        if generated == True:
+            drawfromgrid()
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
