@@ -20,6 +20,7 @@ while True:
     RED = (255,0,0)
     PURPLE = (128,0,128)
     YELLOW = (250,218,94)
+    GREEN = (46,139,87)
     cube_gposX = []
     cube_gposY = []
     walkers = int(input("\n \n \n \nNumber of Walkers[8] : ") or 8 )
@@ -167,6 +168,8 @@ while True:
                     pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 if GRID[j][u] == 2:
                     pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                if GRID[j][u] == 0:
+                    pygame.draw.rect(screen,GREEN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
 
 
 
