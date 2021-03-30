@@ -47,15 +47,11 @@ while True:
 
     #def thimgs
     def walkers(index):
-        pygame.draw.rect(screen,WHITE,(cube_gposX[index] * TILESIZE,cube_gposY[index] * TILESIZE,TILESIZE,TILESIZE))
+        #pygame.draw.rect(screen,WHITE,(cube_gposX[index] * TILESIZE,cube_gposY[index] * TILESIZE,TILESIZE,TILESIZE))
         floormarkerX.append(int(cube_gposX[index]))
         floormarkerY.append(int(cube_gposY[index]))
         count = 0
-
         for x in range(0,len(floormarkerX)):
-            #pygame.draw.rect(screen,RED,(floormarkerX[x] * TILESIZE,floormarkerY[x] * TILESIZE,32,32))
-            #print(floormarkerX[count],floormarkerY[count])
-
             try:
                 GRID[floormarkerY[x]][floormarkerX[x]] = 1
             except IndexError:
@@ -166,16 +162,18 @@ while True:
             for u in range(len(GRID[j])):
                 if GRID[j][u] == 1:
                     pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
-                if GRID[j][u] == 2:
+                elif GRID[j][u] == 2:
                     pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
-                if GRID[j][u] == 0:
+                elif GRID[j][u] == 0:
+                    pygame.draw.rect(screen,GREEN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                else:
                     pygame.draw.rect(screen,GREEN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
 
 
 
     #game loop
     while running == True:
-        clock.tick(30)
+
         screen.fill((0,0,0))
         printgrid()
         random_walk()
@@ -194,6 +192,7 @@ while True:
         GEN_LIMIT -= 1
         if generated == True:
             drawfromgrid()
+            clock.tick(30)
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
