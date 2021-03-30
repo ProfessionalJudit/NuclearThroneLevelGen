@@ -6,7 +6,7 @@ import sys
 
 #Set things
 while True:
-    WIDTH = 1216
+    WIDTH = 1280
     printedmap = False
     HEIGHT = 720
     TILESIZE = 24
@@ -23,8 +23,11 @@ while True:
     GREEN = (46,139,87)
     cube_gposX = []
     cube_gposY = []
-    walkers = int(input("\n \n \n \nNumber of Walkers[8] : ") or 8 )
-    steps = int(input("Number of Steps[150] : ") or 150)
+    #walkers = int(input("\n \n \n \nNumber of Walkers[8] : ") or 8 )
+    #steps = int(input("Number of Steps[150] : ") or 150)
+    walkers = int(8)
+    steps = int(150)
+
     for x in range(walkers):
         cube_gposX.append(GRIDWIDTH / 2 + random.randint(-2, 2))
         cube_gposY.append(GRIDHEIGHT / 2 + random.randint(-2, 2))
