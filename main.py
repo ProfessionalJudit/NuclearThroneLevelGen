@@ -2,10 +2,12 @@ import pygame
 import random
 import array
 import sys
+import os
 
 
 #Set things
 while True:
+
     WIDTH = 1280
     printedmap = False
     HEIGHT = 720
