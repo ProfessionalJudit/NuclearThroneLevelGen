@@ -1,5 +1,5 @@
 # NuclearThroneLevelGen
 
-Made in python
-Im not good at coding
+Made in python \n
+Im not good at coding \n
 Fish Can roll
