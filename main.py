@@ -144,7 +144,7 @@ while True:
 
             if printedmap == False:
                 for i in range(GRIDHEIGHT):
-                    #print(GRID[i])
+                    print(GRID[i])
                     pass
 
             printedmap = True
