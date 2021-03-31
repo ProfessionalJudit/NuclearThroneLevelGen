@@ -23,6 +23,7 @@ while True:
     PURPLE = (128,0,128)
     YELLOW = (250,218,94)
     GREEN = (46,139,87)
+    BROWN = (176,140,108)
     cube_gposX = []
     cube_gposY = []
     #walkers = int(input("\n \n \n \nNumber of Walkers[8] : ") or 8 )
@@ -51,7 +52,7 @@ while True:
     testCube_img = pygame.image.load("empty.png")
     wall = pygame.image.load("Wall.png")
     Ground1 = pygame.image.load("Ground1.png")
-
+    fwall = pygame.image.load("FloorWall.png")
     #def thimgs
     def walkers(index):
         #pygame.draw.rect(screen,WHITE,(cube_gposX[index] * TILESIZE,cube_gposY[index] * TILESIZE,TILESIZE,TILESIZE))
@@ -174,9 +175,21 @@ while True:
                     #pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                     pygame.Surface.blit(screen,wall,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 0:
-                    pygame.draw.rect(screen,GREEN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    pygame.draw.rect(screen,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 else:
-                    pygame.draw.rect(screen,GREEN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    pygame.draw.rect(screen,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                try:
+                    if GRID[j-1][u] == 2 and GRID[j][u] == 1:
+                        pygame.Surface.blit(screen,fwall,(u * TILESIZE-1,j * TILESIZE))
+
+                    if GRID[j][u] == 2 and GRID[j][u-1] == 1:
+                        pygame.draw.line(screen, BROWN, (u * TILESIZE-1 , j * TILESIZE), (u * TILESIZE - 1, j * TILESIZE + TILESIZE))
+
+                    if GRID[j][u] == 2 and GRID[j][u+1] == 1:
+                        pygame.draw.line(screen, BROWN, (u * TILESIZE + TILESIZE - 1 , j * TILESIZE), (u * TILESIZE  + TILESIZE - 1, j * TILESIZE + TILESIZE))
+
+                except IndexError:
+                    pass
 
 
 
