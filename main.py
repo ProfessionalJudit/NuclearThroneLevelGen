@@ -12,8 +12,10 @@ while True:
     printedmap = False
     HEIGHT = 720
     TILESIZE = 20
+    zoom = 1
     GRIDWIDTH = int(WIDTH / TILESIZE)
     GRIDHEIGHT = int(HEIGHT / TILESIZE)
+    display = pygame.Surface((int(WIDTH / zoom), int(HEIGHT / zoom)))
     GRID = []
     for i in range(GRIDHEIGHT):
         GRID.append([0] * GRIDWIDTH)
@@ -42,7 +44,7 @@ while True:
     pygame.init()
     clock = pygame.time.Clock()
     #set screem
-    screen = pygame.display.set_mode((WIDTH,HEIGHT))
+    display = pygame.display.set_mode((WIDTH,HEIGHT))
     running = True
 
     #Icon + title
@@ -68,10 +70,10 @@ while True:
 
     def printgrid():
         for x in range(0,WIDTH,TILESIZE):
-            pygame.draw.line(screen,WHITE,(x,0),(x,HEIGHT))
+            pygame.draw.line(display,WHITE,(x,0),(x,HEIGHT))
 
         for y in range(0,HEIGHT,TILESIZE):
-            pygame.draw.line(screen,WHITE,(0,y),(WIDTH,y))
+            pygame.draw.line(display,WHITE,(0,y),(WIDTH,y))
 
 
 
@@ -170,23 +172,23 @@ while True:
             for u in range(len(GRID[j])):
                 if GRID[j][u] == 1:
                     #pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
-                    pygame.Surface.blit(screen,Ground1,(u * TILESIZE,j * TILESIZE))
+                    pygame.Surface.blit(display,Ground1,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 2:
                     #pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
-                    pygame.Surface.blit(screen,wall,(u * TILESIZE,j * TILESIZE))
+                    pygame.Surface.blit(display,wall,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 0:
-                    pygame.draw.rect(screen,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    pygame.draw.rect(display,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 else:
-                    pygame.draw.rect(screen,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    pygame.draw.rect(display,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 try:
                     if GRID[j-1][u] == 2 and GRID[j][u] == 1:
-                        pygame.Surface.blit(screen,fwall,(u * TILESIZE-1,j * TILESIZE))
+                        pygame.Surface.blit(display,fwall,(u * TILESIZE-1,j * TILESIZE))
 
                     if GRID[j][u] == 2 and GRID[j][u-1] == 1:
-                        pygame.draw.line(screen, BROWN, (u * TILESIZE-1 , j * TILESIZE), (u * TILESIZE - 1, j * TILESIZE + TILESIZE))
+                        pygame.draw.line(display, BROWN, (u * TILESIZE-1 , j * TILESIZE), (u * TILESIZE - 1, j * TILESIZE + TILESIZE))
 
                     if GRID[j][u] == 2 and GRID[j][u+1] == 1:
-                        pygame.draw.line(screen, BROWN, (u * TILESIZE + TILESIZE - 1 , j * TILESIZE), (u * TILESIZE  + TILESIZE - 1, j * TILESIZE + TILESIZE))
+                        pygame.draw.line(display, BROWN, (u * TILESIZE + TILESIZE - 1 , j * TILESIZE), (u * TILESIZE  + TILESIZE - 1, j * TILESIZE + TILESIZE))
 
                 except IndexError:
                     pass
@@ -195,8 +197,7 @@ while True:
 
     #game loop
     while running == True:
-
-        screen.fill((0,0,0))
+        display.fill((0,0,0))
         printgrid()
         random_walk()
         for x in range(0, len(cube_gposX)):
@@ -216,10 +217,13 @@ while True:
             drawfromgrid()
             clock.tick(30)
 
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     running = False
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
+
+        display.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0, 0))
         pygame.display.update()
