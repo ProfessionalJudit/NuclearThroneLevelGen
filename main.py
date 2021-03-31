@@ -11,7 +11,7 @@ while True:
     WIDTH = 1280
     printedmap = False
     HEIGHT = 720
-    TILESIZE = 24
+    TILESIZE = 20
     GRIDWIDTH = int(WIDTH / TILESIZE)
     GRIDHEIGHT = int(HEIGHT / TILESIZE)
     GRID = []
@@ -49,6 +49,8 @@ while True:
 
     #Set images
     testCube_img = pygame.image.load("empty.png")
+    wall = pygame.image.load("Wall.png")
+    Ground1 = pygame.image.load("Ground1.png")
 
     #def thimgs
     def walkers(index):
@@ -166,9 +168,11 @@ while True:
         for j in range(0, len(GRID)):
             for u in range(len(GRID[j])):
                 if GRID[j][u] == 1:
-                    pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    #pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    pygame.Surface.blit(screen,Ground1,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 2:
-                    pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    #pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+                    pygame.Surface.blit(screen,wall,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 0:
                     pygame.draw.rect(screen,GREEN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 else:
