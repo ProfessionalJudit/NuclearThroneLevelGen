@@ -9,23 +9,28 @@ import os
 while True:
 
     WIDTH = 1280
+    gridcalcx = 1152
+    gridcalcy = 648
     printedmap = False
     HEIGHT = 720
     TILESIZE = 20
-    zoom = 2
-
-
-    GRIDWIDTH = int(WIDTH / TILESIZE)
-    GRIDHEIGHT = int(HEIGHT / TILESIZE)
+    zoom = 1
+    pressed_down = False
+    pressed_up = False
+    pressed_left = False
+    pressed_right = False
+    x_speed = 6
+    y_speed = 6
+    GRIDWIDTH = int((gridcalcx / TILESIZE))
+    GRIDHEIGHT = int((gridcalcy / TILESIZE))
     display = pygame.Surface((int(WIDTH), int(HEIGHT)))
     GRID = []
     for i in range(GRIDHEIGHT):
         GRID.append([0] * GRIDWIDTH)
-
-    WHITE = (255,255,255)
     RED = (255,0,0)
     PURPLE = (128,0,128)
     YELLOW = (250,218,94)
+    WHITE = (255,255,255)
     GREEN = (46,139,87)
     BROWN = (176,140,108)
     cube_gposX = []
@@ -42,11 +47,16 @@ while True:
     generated = False
     floormarkerX = array.array("i")
     floormarkerY = array.array("i")
-    #initº1º1
+
+
+    #init
     pygame.init()
     clock = pygame.time.Clock()
     #set screem
-    screen = pygame.display.set_mode((int(WIDTH),int(HEIGHT)))
+    screen = pygame.display.set_mode((int(WIDTH),int(HEIGHT)),pygame.RESIZABLE)
+    w, h = pygame.display.get_surface().get_size()
+    playercorx = w / 2
+    playercory = h / 2
 
     running = True
 
@@ -54,7 +64,7 @@ while True:
     pygame.display.set_caption("Window")
 
     #Set images
-    testCube_img = pygame.image.load("empty.png")
+    empty = pygame.image.load("empty.png")
     wall = pygame.image.load("Wall.png")
     Ground1 = pygame.image.load("Ground1.png")
     fwall = pygame.image.load("FloorWall.png")
@@ -96,28 +106,28 @@ while True:
             if generated == False:
 
                 if select_dir > 0 and select_dir < 0.25:
-                    print("LEFT")
+
                     if cube_gposX[x] <= 1:
                         pass
                     else:
                         cube_gposX[x] = LEFT
 
                 if select_dir > 0.26 and select_dir < 0.5:
-                    print("RIGHT")
+
                     if cube_gposX[x] >= GRIDWIDTH - 1:
                         pass
                     else:
                         cube_gposX[x] = RIGHT
 
                 if select_dir > 0.51 and select_dir < 0.75:
-                    print("UP")
+
                     if cube_gposY[x] == GRIDHEIGHT - 2:
                         pass
                     else:
                         cube_gposY[x] = DOWN
 
                 if select_dir > 0.76 and select_dir < 1:
-                    print("DOWN")
+
                     if cube_gposY[x] == 2:
                         pass
                     else:
@@ -153,66 +163,65 @@ while True:
 
                             if GRID[GRIDHEIGHT][u] == 2:
                                 GRID[GRIDHEIGHT][u] = 2
+
                             if GRID[j][0] == 2:
                                 GRID[j][0] = 2
+
                             if GRID[j][GRIDWIDTH - 1] == 2:
                                 GRID[j][GRIDWIDTH - 1] = 2
                         except IndexError:
                             pass
-        for j in range(0, len(GRID)):
-            for u in range(len(GRID[j])):
 
-                if GRID[j][u] == 2:
-                    try:
-                        if GRID[j][u+1] == 1 and GRID[j][u-1] == 1 and GRID[j+1][u] == 1 and GRID[j-1][u] == 1:
-                            GRID[j][u] = 1
-                    except IndexError:
-                        GRID[j][u] = 2
+                        if GRID[j][u] == 2:
+                            try:
+                                if GRID[j][u+1] == 1 and GRID[j][u-1] == 1 and GRID[j+1][u] == 1 and GRID[j-1][u] == 1:
+                                    GRID[j][u] = 1
+                            except IndexError:
+                                GRID[j][u] = 2
 
 
     def drawfromgrid():
         for j in range(0, len(GRID)):
             for u in range(len(GRID[j])):
                 if GRID[j][u] == 1:
-                    #pygame.draw.rect(screen,YELLOW,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
-                    #pygame.Surface.blit(screen,Ground1,(u * TILESIZE,j * TILESIZE))
+
                     pygame.Surface.blit(display,Ground1,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 2:
-                    #pygame.draw.rect(screen,PURPLE,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
-                    #pygame.Surface.blit(screen,wall,(u * TILESIZE,j * TILESIZE))
+
                     pygame.Surface.blit(display,wall,(u * TILESIZE,j * TILESIZE))
                 elif GRID[j][u] == 0:
-                    #pygame.draw.rect(screen,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+
                     pygame.draw.rect(display,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 else:
-                    #pygame.draw.rect(screen,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
+
                     pygame.draw.rect(display,BROWN,(u * TILESIZE,j * TILESIZE,TILESIZE,TILESIZE))
                 try:
                     if GRID[j-1][u] == 2 and GRID[j][u] == 1:
-                        #pygame.Surface.blit(screen,fwall,(u * TILESIZE-1,j * TILESIZE))
+
                         pygame.Surface.blit(display,fwall,(u * TILESIZE-1,j * TILESIZE))
                     if GRID[j][u] == 2 and GRID[j][u-1] == 1:
-                        #pygame.draw.line(screen, BROWN, (u * TILESIZE-1 , j * TILESIZE), (u * TILESIZE - 1, j * TILESIZE + TILESIZE))
+
                         pygame.draw.line(display, BROWN, (u * TILESIZE-1 , j * TILESIZE), (u * TILESIZE - 1, j * TILESIZE + TILESIZE))
                     if GRID[j][u] == 2 and GRID[j][u+1] == 1:
-                        #pygame.draw.line(screen, BROWN, (u * TILESIZE + TILESIZE - 1 , j * TILESIZE), (u * TILESIZE  + TILESIZE - 1, j * TILESIZE + TILESIZE))
+
                         pygame.draw.line(display, BROWN, (u * TILESIZE + TILESIZE - 1 , j * TILESIZE), (u * TILESIZE  + TILESIZE - 1, j * TILESIZE + TILESIZE))
                 except IndexError:
                     pass
 
 
-
     #game loop
     while running == True:
-        screen.fill((0,0,0))
-        printgrid()
+        fps = str(int(clock.get_fps()))
+        display.fill(BROWN)
+    #    printgrid()
         random_walk()
+
         for x in range(0, len(cube_gposX)):
             walkers(x)
         if GEN_LIMIT == 0:
             generated = True
-
             borders()
+
             if printedmap == False:
                 for i in range(GRIDHEIGHT):
                     print(GRID[i])
@@ -221,20 +230,20 @@ while True:
 
             printedmap = True
         GEN_LIMIT -= 1
+
         if generated == True:
             drawfromgrid()
-            clock.tick(30)
+
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     running = False
+
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
-                if event.key == pygame.K_SPACE:
-                    running = False
-                if event.key == pygame.K_ESCAPE:
-                    sys.exit()
-        w, h = pygame.display.get_surface().get_size()
-        screen.blit(pygame.transform.scale(display,(w ,h)),(0,0))
+
+
+        screen.blit(pygame.transform.scale(display, screen.get_rect().size), (0, 0))
+        #screen.blit(display,(0,0))
         pygame.display.update()
