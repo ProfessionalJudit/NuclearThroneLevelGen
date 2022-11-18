@@ -2,14 +2,10 @@
 
 Made in python
 
-Im not good at coding
-
-This uses pygame
-
-Fish Can roll
+Old python code(From before i knew how to actually code), that generates a nuclear throne like level
 
 Spacebar to generate new
 
 ESC to exit
 
-//Hola Lluis
+
